@@ -1,0 +1,9 @@
+pygame
+numpy
+opencv-python==4.10.0.84
+gymnasium
+tensorboard
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch
+torchvision
+torchaudio
