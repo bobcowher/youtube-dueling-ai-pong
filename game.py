@@ -2,6 +2,7 @@ import pygame
 import sys
 import gymnasium as gym
 import os
+from assets import *
 
 class Pong(gym.Env):
 
@@ -61,6 +62,27 @@ class Pong(gym.Env):
 
         self.top_score = 20
 
+        self.player_1_paddle = Paddle(x=self.window_width - 2 * (self.window_width / 64),
+                                      y=(self.window_height / 2) - (self.paddle_height / 2),
+                                      player_color=self.player_1_color, 
+                                      height=self.paddle_height,
+                                      width=self.paddle_width,
+                                      window_height=self.window_height);
+        
+        self.player_2_paddle = Paddle(x=(self.window_width / 64),
+                                      y=(self.window_height / 2) - (self.paddle_height / 2),
+                                      player_color=self.player_2_color, 
+                                      height=self.paddle_height,
+                                      width=self.paddle_width,
+                                      window_height=self.window_height);
+
+        self.ball = Ball(window_height=self.window_height,
+                         window_width=self.window_width, 
+                         height=20,
+                         width=20,
+                         player_1_paddle=self.player_1_paddle,
+                         player_2_paddle=self.player_2_paddle)
+                                         
 
     def fill_background(self):
         self.screen.fill(self.background_color)
@@ -108,15 +130,53 @@ class Pong(gym.Env):
             if(player_2_action != 0):
                 print("Player 2 Action: ", player_2_action)
 
-            self.step()
+            self.step(player_1_action=player_1_action,
+                      player_2_action=player_2_action)
 
 
-    def step(self, player_1_action=None, player_2_action=None):
-        self.fill_background()
+    def step(self, player_1_action=0, player_2_action=0):
+
+        player_1_reward = 0
+        player_2_reward = 0
+        info = {}
+        done = False
+        truncated = False
+
+        for i in range(self.step_repeat):
+            self._step(player_1_action=player_1_action,
+                       player_2_action=player_2_action)
+
+        ball_center = self.ball.x + (self.ball.width / 2)
+
+        if(ball_center < 0):
+            self.player_1_score += 1
+            player_1_reward += 1
+            player_2_reward -= 1
+            self.ball.spawn()
+        elif(ball_center > self.window_width):
+            self.player_2_score += 1
+            player_1_reward -= 1
+            player_2_reward += 1
+            self.ball.spawn()
+
+    
+    def _step(self, player_1_action=0, player_2_action=0):
         
+        self.player_1_paddle.move(player_1_action)
+        self.player_2_paddle.move(player_2_action)
+
+        self.fill_background()
+
+        self.player_1_paddle.draw(screen=self.screen)
+        self.player_2_paddle.draw(screen=self.screen)
+        self.ball.move()
+        self.ball.draw(screen=self.screen)
+
         if(self.render_mode == "human"):
             self.clock.tick(self.fps)
             pygame.display.flip()
+
+
     
 
 
