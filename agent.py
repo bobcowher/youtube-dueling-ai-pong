@@ -1,14 +1,16 @@
 import torch
+from buffer import ReplayBuffer
 from model import Model
 from game import Pong
 from collections import deque
+import time
 
 class Agent():
 
     def __init__(self, hidden_layer=512,
                        learning_rate=0.0001,
                        gamma=0.99,
-                       max_buffer_size=100000,
+                       max_buffer_size=200000,
                        eval=False,
                        frame_stack=3,
                        target_update_interval=10000,
@@ -33,7 +35,13 @@ class Agent():
 
         print(f"Creating agent with device {self.device}...")
 
-        model = Model(action_dim=3, hidden_dim=hidden_layer, observation_shape=obs.shape, obs_stack=self.frame_stack)
+        self.memory = ReplayBuffer(max_size=max_buffer_size, input_shape=obs.shape, 
+                                   n_actions=self.env.action_space.n, input_device=self.device,
+                                   output_device=self.device) 
+
+        self.model = Model(action_dim=3, hidden_dim=hidden_layer, observation_shape=obs.shape, obs_stack=self.frame_stack)
+
+        time.sleep(30)
 
     
     def init_frame_stack(self, obs):
