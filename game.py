@@ -86,6 +86,8 @@ class Pong(gym.Env):
                          width=20,
                          player_1_paddle=self.player_1_paddle,
                          player_2_paddle=self.player_2_paddle)
+
+        return self._get_obs(), {}
         
 
     def _get_obs(self):
