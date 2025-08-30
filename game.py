@@ -176,7 +176,11 @@ class Pong(gym.Env):
                 player_1_action = self.get_bot_move(player=1)
             if self.player2 == "bot":
                 player_2_action = self.get_bot_move(player=2)
-            
+
+            if self.player1 == "ai":
+                player_1_action = self.get_ai_move(player=1)
+            if self.player2 == "ai":
+                player_2_action = self.get_ai_move(player=2)
 
             observation, player_1_reward, player_2_reward, done, truncated, info = self.step(player_1_action=player_1_action,
                       player_2_action=player_2_action)
@@ -213,6 +217,25 @@ class Pong(gym.Env):
 
         return next_move
 
+
+    def get_ai_move(self, player):
+
+        if self.ai_agent == None:
+            raise Exception("Can't make an AI move without an AI")
+        elif player not in [1, 2]:
+            raise Exception("Only players 1 and 2 are valid")
+
+        obs = self._get_obs()
+        obs = self.ai_agent.process_observation(obs)
+
+        action = None
+
+        if(player == 1):
+            action = self.ai_agent.get_action(obs, player=1)
+        elif(player == 2):
+            action = self.ai_agent.get_action(obs, player=2)
+
+        return action
 
 
     def step(self, player_1_action=None, player_2_action=None):

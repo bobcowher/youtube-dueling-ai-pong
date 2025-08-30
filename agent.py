@@ -35,7 +35,7 @@ class Agent():
         self.frames = deque(maxlen=self.frame_stack)
 
         if eval:
-            self.model = Model(action_dim=3, hidden_dim=hidden_layer, observation_shape=obs.shape, obs_stack=self.frame_stack).to(self.device)
+            self.model = Model(action_dim=3, hidden_dim=hidden_layer, observation_shape=(frame_stack, 84, 84), obs_stack=self.frame_stack).to(self.device)
             self.model.load_the_model()
             self.epsilon = 0
             return
@@ -149,8 +149,8 @@ class Agent():
             
             while not done and episode_steps < self.max_episode_steps:
 
-                player_1_action = self.get_action(obs, player=1, checkpoint_model=False, episode=episode)
-                player_2_action = self.get_action(obs, player=2, checkpoint_model=False, episode=episode)
+                player_1_action = self.get_action(obs, player=1, checkpoint_model=player_1_use_checkpoint, episode=episode)
+                player_2_action = self.get_action(obs, player=2, checkpoint_model=player_2_use_checkpoint, episode=episode)
 
                 player_1_reward = 0
                 player_2_reward = 0
