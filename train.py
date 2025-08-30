@@ -1,7 +1,7 @@
 from agent import Agent
 import time
 
-episodes = 500
+episodes = 3000
 max_episode_steps = 2000
 batch_size = 32
 learning_rate = 0.0001
@@ -11,7 +11,7 @@ epsilon_decay = 0.995
 gamma = 0.99
 max_buffer_size = 200000
 target_update_interval = 10000
-checkpoint_pool = 3
+checkpoint_pool = 5
 hidden_layer = 756
 
 start_time = time.perf_counter()
